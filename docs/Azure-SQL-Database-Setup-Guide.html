@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗄️ Azure SQL Database Setup Guide - Resource Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #4b454562;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            padding: 10px 0;
+            color: #1a1a1a;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin: 30px 0 20px 0;
+            padding: 10px 0;
+            border-bottom: 2px solid #e0e0e0;
+            color: #1a1a1a;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 15px 0 10px 0;
+            color: #333;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 10px 0 10px 30px;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 8px 0;
+        }
+
+        ol {
+            margin: 10px 0 10px 30px;
+            padding: 0;
+        }
+
+        ol li {
+            margin: 8px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        tr:hover {
+            background: #f0f0f0;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            border-left: 4px solid #667eea;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        blockquote {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f9f9f9;
+            color: #666;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e0e0e0;
+            margin: 30px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-blue {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .step-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .details-box {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .details-box h3 {
+            margin-top: 0;
+        }
+
+        details {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        details[open] {
+            background: #f0f0f0;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 10px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        summary:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .pink details {
+            border-left-color: #ff57c48e;
+        }
+
+        .pink summary {
+            background: #ff57c4;
+            color: white;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .pink details[open] summary {
+            background: #ff57c48e;
+        }
+
+        .purple details {
+            border-left-color: #8b5cf6;
+        }
+
+        .purple summary {
+            background: #3200a6b6;
+            color: white;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .purple details[open] summary {
+            background: #8b5cf6;
+        }
+
+        .yellow details {
+            border-left-color: #708100b0;
+        }
+
+        .yellow summary {
+            background: #708100;
+            color: #1a1a1a;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .yellow details[open] summary {
+            background: #708100b0;
+        }
+
+        .green details {
+            border-left-color: #01913ba9;
+        }
+
+        .green summary {
+            background: #01913a;
+            color: #ffffff;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .green details[open] summary {
+            background: #01913ba9;
+        }
+
+        .red details {
+            border-left-color: #ff000096;
+        }
+
+        .red summary {
+            background: #ff0000;
+            color: white;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .red details[open] summary {
+            background: #ff000096;
+        }
+
+        .teal details {
+            border-left-color: #3900b4ad;
+        }
+
+        .teal summary {
+            background: #3900b4;
+            color: #ffffff;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+        }
+
+        .teal details[open] summary {
+            background: #3900b4ad;
+        }
+
+        .icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .check-mark {
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="top">
+        <h1>🗄️ Azure SQL Database Setup Guide</h1>
+        
+        <p><strong>This folder contains all SQL scripts required to set up the Azure SQL Database for the Resource Management Dashboard.</strong></p>
+
+        <hr>
+
+        <h2>📋 Files in This Folder</h2>
+
+        <table>
+            <tr>
+                <th>File</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>01_create_tables.sql</code></td>
+                <td>Creates all database tables</td>
+            </tr>
+            <tr>
+                <td><code>02_insert_default_data.sql</code></td>
+                <td>Inserts default theme configuration</td>
+            </tr>
+            <tr>
+                <td><code>03_create_admin_user.sql</code></td>
+                <td>Creates default admin user</td>
+            </tr>
+            <tr>
+                <td><code>04_sample_resources.sql</code></td>
+                <td>Inserts sample resources (optional)</td>
+            </tr>
+            <tr>
+                <td><code>backup_and_restore.sql</code></td>
+                <td>Backup and restore commands</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>🚀 Quick Setup (Step-by-Step)</h2>
+
+        <h3>Step 1: Create Azure SQL Database</h3>
+        
+        <ol>
+            <li><strong>Login to Azure Portal:</strong> <a href="https://portal.azure.com">https://portal.azure.com</a></li>
+            <li>Search for <strong>"SQL databases"</strong></li>
+            <li>Click <strong>"+ Create"</strong></li>
+            <li>Fill in details:
+                <ul>
+                    <li><strong>Resource Group:</strong> Create new or select existing</li>
+                    <li><strong>Database Name:</strong> <code>resource-dashboard-db</code> (<strong>CHANGE ACCORDINGLY</strong>)</li>
+                    <li><strong>Server:</strong> Create new
+                        <ul>
+                            <li><strong>Server name:</strong> <code>your-unique-server-name</code> (<strong>CHANGE ACCORDINGLY</strong>)</li>
+                            <li><strong>Location:</strong> Southeast Asia (or your preferred region)</li>
+                            <li><strong>Authentication:</strong> SQL authentication</li>
+                            <li><strong>Admin login:</strong> <code>dbadmin</code> (<strong>CHANGE ACCORDINGLY</strong>)</li>
+                            <li><strong>Password:</strong> Strong password (<strong>CHANGE ACCORDINGLY</strong> and SAVE IT!)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Compute + Storage:</strong> Basic or Standard tier</li>
+                </ul>
+            </li>
+            <li><strong>Networking:</strong>
+                <ul>
+                    <li>✅ Allow Azure services</li>
+                    <li>✅ Add current client IP</li>
+                </ul>
+            </li>
+            <li>Click <strong>"Review + Create"</strong> > <strong>"Create"</strong></li>
+        </ol>
+
+        <p><strong>⏱ Wait:</strong> 5-10 minutes for deployment</p>
+
+        <hr>
+
+        <h3>Step 2: Get Connection String</h3>
+
+        <ol>
+            <li>Go to your database resource</li>
+            <li>Click <strong>"Connection strings"</strong> (left menu)</li>
+            <li>Copy the <strong>ADO.NET</strong> connection string</li>
+            <li>Note it down - you'll need it for <code>.env</code> configuration</li>
+        </ol>
+
+        <p><strong>Format for PyMSSQL (Backend .env):</strong></p>
+        <pre>mssql+pymssql://USERNAME:PASSWORD@SERVER_NAME.database.windows.net:1433/DATABASE_NAME</pre>
+
+        <p><strong>Example (CHANGE ACCORDINGLY):</strong></p>
+        <pre>mssql+pymssql://dbadmin:MySecure@Pass123@resource-server.database.windows.net:1433/resource-dashboard-db</pre>
+
+        <hr>
+
+        <h3>Step 3: Run SQL Scripts</h3>
+
+        <h4>Option A: Using Azure Portal Query Editor (Easiest)</h4>
+
+        <ol>
+            <li>Go to your database in Azure Portal</li>
+            <li>Click <strong>"Query editor"</strong> (left menu)</li>
+            <li>Login with:
+                <ul>
+                    <li><strong>Authentication type:</strong> SQL authentication</li>
+                    <li><strong>Login:</strong> <code>dbadmin</code> (or your admin username)</li>
+                    <li><strong>Password:</strong> Your database password</li>
+                </ul>
+            </li>
+            <li><em><strong>PLEASE NOTE THAT, IN YOUR SQL SERVER FIREWALL, CLIENT IP AND BACKEND IP SHOULD BE ALLOWED, FOR PRACTISE PURPOSE ONLY</strong></em></li>
+            <li>Run scripts in order:
+                <ul>
+                    <li>Copy content of <code>01_create_tables.sql</code> → Paste → Click <strong>"Run"</strong></li>
+                    <li>Copy content of <code>02_insert_default_data.sql</code> → Paste → Click <strong>"Run"</strong></li>
+                    <li>Copy content of <code>03_create_admin_user.sql</code> → Paste → Click <strong>"Run"</strong></li>
+                    <li>(Optional) Copy content of <code>04_sample_resources.sql</code> → Paste → Click <strong>"Run"</strong></li>
+                </ul>
+            </li>
+        </ol>
+
+        <p>✅ <strong>Done!</strong> Database is ready.</p>
+
+        <h4>Option B: Using SQL Server Management Studio (SSMS)</h4>
+
+        <ol>
+            <li>Download SSMS: <a href="https://aka.ms/ssmsfullsetup">https://aka.ms/ssmsfullsetup</a></li>
+            <li>Connect to Azure SQL:
+                <ul>
+                    <li><strong>Server name:</strong> <code>your-server.database.windows.net</code></li>
+                    <li><strong>Authentication:</strong> SQL Server Authentication</li>
+                    <li><strong>Login:</strong> Your admin username</li>
+                    <li><strong>Password:</strong> Your admin password</li>
+                </ul>
+            </li>
+            <li>Open each <code>.sql</code> file and execute in order</li>
+        </ol>
+
+        <h4>Option C: Using Python Script (From Backend)</h4>
+
+        <pre>bash
+# Make sure backend .env is configured with DATABASE_URL
+cd backend
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+
+# Run migration
+python -c "from app.db.database import engine; from app.models.user import Base; Base.metadata.create_all(engine)"</pre>
+
+        <hr>
+
+        <h3>Step 4: Verify Tables</h3>
+
+        <p>Run this query in Query Editor:</p>
+
+        <pre>sql
+-- Check all tables
+SELECT TABLE_NAME 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_TYPE = 'BASE TABLE';</pre>
+
+        <p><strong>Expected Output:</strong></p>
+        <ul>
+            <li><code>users</code></li>
+            <li><code>theme_config</code></li>
+            <li><code>resources</code></li>
+        </ul>
+
+        <hr>
+
+        <h2>🔐 Default Admin User</h2>
+
+        <p>After running <code>03_create_admin_user.sql</code>, you'll have:</p>
+
+        <ul>
+            <li><strong>Email:</strong> <code>admin@example.com</code> (<strong>CHANGE ACCORDINGLY</strong> in the SQL file)</li>
+            <li><strong>Password:</strong> <code>Admin@123</code> (<strong>CHANGE ACCORDINGLY</strong> in the SQL file)</li>
+            <li><strong>Role:</strong> admin</li>
+            <li><strong>Protected:</strong> Yes (cannot be deleted)</li>
+        </ul>
+
+        <p>⚠️ <strong>IMPORTANT:</strong> Change these credentials in production!</p>
+
+        <hr>
+
+        <h2>🔄 Backup and Restore</h2>
+
+        <h3>Backup Database</h3>
+
+        <p><strong>Azure Portal:</strong></p>
+        <ol>
+            <li>Go to SQL database</li>
+            <li>Click <strong>"Export"</strong></li>
+            <li>Choose storage account</li>
+            <li>Enter admin credentials</li>
+            <li>Click <strong>"OK"</strong></li>
+        </ol>
+
+        <p><strong>Automated Backups:</strong><br>
+        Azure SQL automatically backs up databases. You can restore to any point in last 7-35 days.</p>
+
+        <h3>Restore Database</h3>
+
+        <ol>
+            <li>Go to SQL database</li>
+            <li>Click <strong>"Restore"</strong></li>
+            <li>Select restore point</li>
+            <li>Enter new database name</li>
+            <li>Click <strong>"OK"</strong></li>
+        </ol>
+
+        <hr>
+
+        <h2>🔍 Troubleshooting</h2>
+
+        <h3>Cannot connect to database</h3>
+
+        <p><strong>Check:</strong></p>
+        <ul>
+            <li>✅ Firewall rules include your IP</li>
+            <li>✅ Connection string is correct</li>
+            <li>✅ Username/password are correct</li>
+            <li>✅ Server name has <code>.database.windows.net</code></li>
+        </ul>
+
+        <p><strong>Add IP to Firewall:</strong></p>
+        <ol>
+            <li>SQL Database > Networking</li>
+            <li>Add your current IP address</li>
+            <li>Save</li>
+        </ol>
+
+        <h3>Query timeout</h3>
+
+        <p><strong>Solution:</strong></p>
+        <ul>
+            <li>Increase connection timeout in connection string</li>
+            <li>Check database tier (Basic might be slow)</li>
+            <li>Upgrade to Standard tier</li>
+        </ul>
+
+        <h3>Permission denied</h3>
+
+        <p><strong>Check:</strong></p>
+        <ul>
+            <li>Using admin credentials?</li>
+            <li>User has proper permissions?</li>
+        </ul>
+
+        <hr>
+
+        <h2>📊 Database Schema</h2>
+
+        <h3>Users Table</h3>
+        <ul>
+            <li>Stores user accounts</li>
+            <li>Includes authentication info</li>
+            <li>Role-based access control</li>
+        </ul>
+
+        <h3>Resources Table</h3>
+        <ul>
+            <li>Infrastructure resources</li>
+            <li>Performance metrics</li>
+            <li>User ownership</li>
+        </ul>
+
+        <h3>Theme Config Table</h3>
+        <ul>
+            <li>User theme preferences</li>
+            <li>Color schemes</li>
+            <li>Dark/light mode settings</li>
+        </ul>
+
+        <hr>
+
+        <h2>🔗 Connection String Examples</h2>
+
+        <p><strong>Development (Local):</strong></p>
+        <pre>env
+DATABASE_URL=sqlite:///./resource_dashboard.db</pre>
+
+        <p><strong>Production (Azure SQL):</strong></p>
+        <pre>env
+# CHANGE ACCORDINGLY with your actual credentials
+DATABASE_URL=mssql+pymssql://dbadmin:YourPassword@your-server.database.windows.net:1433/resource-dashboard-db</pre>
+
+        <hr>
+
+        <div class="pink">
+            <details>
+                <summary><span class="icon">💡</span> Architecture Benefits</summary>
+                
+                <h3>✅ All About Our Complete Project</h3>
+
+                <ol>
+                    <li><strong>Frontend</strong> - React + Vite (Static build ready)</li>
+                    <li><strong>Backend</strong> - Python FastAPI with JWT authentication</li>
+                    <li><strong>Database</strong> - Azure SQL Database</li>
+                </ol>
+
+                <h3>📁 Project Structure</h3>
+
+                <pre>project/
+├── backend/                    # Python FastAPI Backend
+│   ├── app/
+│   │   ├── api/               # API endpoints (auth, users, theme)
+│   │   ├── core/              # Config & security
+│   │   ├── db/                # Database setup
+│   │   ├── models/            # SQLAlchemy models
+│   │   ├── schemas/           # Pydantic schemas
+│   │   └── main.py           # FastAPI application
+│   ├── requirements.txt       # Python dependencies
+│   ├── azure_sql_schema.sql  # Database schema
+│   └── README.md             # Backend documentation
+│
+├── client/                    # React Frontend
+│   ├── src/
+│   │   ├── components/       # UI components
+│   │   ├── pages/           # Page components
+│   │   ├── contexts/        # Auth context (updated for Python backend)
+│   │   ├── config/          # API configuration
+│   │   └── lib/             # API client (updated)
+│   └── .env.example         # Frontend env vars
+│
+└── DEPLOYMENT_GUIDE.md      # Complete deployment instructions</pre>
+            </details>
+        </div>
+
+        <div class="purple">
+            <details>
+                <summary><span class="icon">🔧</span> What Included</summary>
+                
+                <h3>Backend</h3>
+                <ul>
+                    <li>✅ <strong>Python FastAPI</strong> framework instead of Node.js</li>
+                    <li>✅ <strong>Azure SQL Database</strong> instead of Supabase Postgres</li>
+                    <li>✅ <strong>JWT Authentication</strong> with python-jose</li>
+                    <li>✅ <strong>SQLAlchemy ORM</strong> for database operations</li>
+                    <li>✅ <strong>Pydantic</strong> for request/response validation</li>
+                </ul>
+
+                <h3>Frontend</h3>
+                <ul>
+                    <li>✅ <strong>Auth Context</strong> to use Python backend API</li>
+                    <li>✅ <strong>API Client</strong> to call FastAPI endpoints</li>
+                    <li>✅ <strong>API Configuration</strong> for backend URL</li>
+                </ul>
+
+                <h3>Database</h3>
+                <ul>
+                    <li>✅ <strong>Azure SQL Schema</strong> created</li>
+                    <li>✅ <strong>Users table</strong> with email, password, roles</li>
+                    <li>✅ <strong>Theme config table</strong> for customization</li>
+                    <li>✅ <strong>Default theme values</strong> inserted</li>
+                </ul>
+            </details>
+        </div>
+
+        <div class="red">
+            <details>
+                <summary><span class="icon">🚀</span> OUR MAIN IMPORTANT STEPS</summary>
+                
+                <h3>1. Setup Azure SQL Database</h3>
+                <pre>bash
+# Azure Portal mein:
+1. Create SQL Database
+2. Note: server name, database name, username, password
+3. Run: backend/azure_sql_schema.sql
+4. Configure firewall rules for VM IPs</pre>
+
+                <h3>2. Deploy Backend (VM 2)</h3>
+                <pre>bash
+# Backend VM mein:
+cd backend
+pip install -r requirements.txt
+
+# .env file configure karo:
+AZURE_SQL_SERVER=your-server.database.windows.net
+AZURE_SQL_DATABASE=your-database
+AZURE_SQL_USERNAME=your-username
+AZURE_SQL_PASSWORD=your-password
+SECRET_KEY=your-secret-key
+
+# Run backend:
+python run.py
+# Production: uvicorn app.main:app --host 0.0.0.0 --port 8000</pre>
+
+                <h3>3. Deploy Frontend (VM 1)</h3>
+                <pre>bash
+# Frontend VM mein:
+cd client
+
+# Update API URL in .env:
+VITE_API_URL=http://backend-vm-ip:8000
+
+# Build frontend:
+npm install
+npm run build
+
+# Deploy to nginx:
+sudo cp -r dist/public/* /var/www/html/</pre>
+            </details>
+        </div>
+
+        <div class="yellow">
+            <details>
+                <summary><span class="icon">🔐</span> Security Notes</summary>
+                
+                <h3>1. Environment Variables</h3>
+                <ul>
+                    <li>Backend: Use <code>.env</code> file (see <code>backend/.env.example</code>)</li>
+                    <li>Frontend: Use <code>client/.env</code> (see <code>client/.env.example</code>)</li>
+                </ul>
+
+                <h3>2. Production Checklist</h3>
+                <ul>
+                    <li><input type="checkbox"> Change SECRET_KEY to random secure value</li>
+                    <li><input type="checkbox"> Enable HTTPS with SSL certificates</li>
+                    <li><input type="checkbox"> Configure Azure SQL firewall rules</li>
+                    <li><input type="checkbox"> Set up Azure Key Vault for secrets</li>
+                    <li><input type="checkbox"> Enable CORS only for your frontend domain</li>
+                    <li><input type="checkbox"> Use strong passwords for database</li>
+                </ul>
+            </details>
+        </div>
+
+        <div class="green">
+            <details>
+                <summary><span class="icon">📋</span> Features Implemented</summary>
+                
+                <h3>Authentication</h3>
+                <ul>
+                    <li>✅ User signup with email/password</li>
+                    <li>✅ User login with JWT tokens</li>
+                    <li>✅ Role-based access control (admin/user)</li>
+                    <li>✅ Protected routes</li>
+                </ul>
+
+                <h3>User Management</h3>
+                <ul>
+                    <li>✅ Get current user profile</li>
+                    <li>✅ Update user profile (name, bio, avatar)</li>
+                    <li>✅ Admin: View all users</li>
+                    <li>✅ Admin: View user by ID</li>
+                </ul>
+
+                <h3>Theme Configuration</h3>
+                <ul>
+                    <li>✅ Get theme configuration</li>
+                    <li>✅ Admin: Update theme colors</li>
+                    <li>✅ Default theme values</li>
+                </ul>
+            </details>
+        </div>
+
+        <div class="teal">
+            <details>
+                <summary><span class="icon">🧪</span> Testing</summary>
+                
+                <h3>Test Backend API</h3>
+                <pre>bash
+# Health check
+curl http://localhost:8000/health
+
+# Get theme config (public)
+curl http://localhost:8000/api/theme
+
+# Signup
+curl -X POST http://localhost:8000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+
+# Login
+curl -X POST http://localhost:8000/api/auth/login \
+  -d "email=test@example.com&password=password123"</pre>
+
+                <h3>Test Frontend</h3>
+                <pre>bash
+# Local development:
+npm run dev
+# Open: http://localhost:5000
+
+# Production build:
+npm run build
+# Serve dist/public/ with nginx</pre>
+            </details>
+        </div>
+
+        <hr>
+
+        <p style="text-align: center; margin-top: 40px; opacity: 0.7;">
+            <strong>Resource Management Dashboard</strong> • Azure SQL Database Setup Guide<br>
+            Last Updated: November 26, 2025 • Built with ❤️ by Ritesh Sharma
+        </p>
+
+    </div>
+</body>
+</html>
