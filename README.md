@@ -13,7 +13,7 @@
 
 ## 🌐 [📺 Live Demo →](https://riteshatri.github.io/resource-management-database/) | [📖 Full Documentation →](https://riteshatri.github.io/resource-management-database/Readme.html)
 
-> 👉 **Click above to view the live deployed application with complete setup guide**
+> 👆👆👆 **Click above to view the live deployed application with complete setup guide**
 
 ---
 
